@@ -1,4 +1,4 @@
-module costa92/logger
+module github.com/costa92/logger
 
 go 1.19
 
