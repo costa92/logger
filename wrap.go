@@ -1,114 +1,105 @@
 package logger
 
-import (
-	"context"
-
-	"go.uber.org/zap"
-)
-
 func Debug(args ...interface{}) {
-	l.Debug(args...)
+	std.zapLogger.Sugar().Debug(args...)
 }
 
 func Info(args ...interface{}) {
-	l.Info(args...)
+	std.zapLogger.Sugar().Info(args...)
 }
 
 func Warn(args ...interface{}) {
-	l.Warn(args...)
+	std.zapLogger.Sugar().Warn(args...)
 }
 
 func Error(args ...interface{}) {
-	l.Error(args...)
+	std.zapLogger.Sugar().Error(args...)
 }
 
 func DPanic(args ...interface{}) {
-	l.DPanic(args...)
+	std.zapLogger.Sugar().DPanic(args...)
 }
 
 func Panic(args ...interface{}) {
-	l.Panic(args...)
+	std.zapLogger.Sugar().Panic(args...)
 }
 
 func Fatal(args ...interface{}) {
-	l.Fatal(args...)
+	std.zapLogger.Sugar().Fatal(args...)
 }
 
 func Debugf(template string, args ...interface{}) {
-	l.Debugf(template, args...)
+	std.zapLogger.Sugar().Debugf(template, args...)
 }
 
 func Infof(template string, args ...interface{}) {
-	l.Infof(template, args...)
+	std.zapLogger.Sugar().Infof(template, args...)
 }
 
 func Warnf(template string, args ...interface{}) {
-	l.Warnf(template, args...)
+	std.zapLogger.Sugar().Warnf(template, args...)
 }
 
 func Errorf(template string, args ...interface{}) {
-	l.Errorf(template, args...)
+	std.zapLogger.Sugar().Errorf(template, args...)
 }
 
 func DPanicf(template string, args ...interface{}) {
-	l.DPanicf(template, args...)
+	std.zapLogger.Sugar().DPanicf(template, args...)
 }
 
 func Panicf(template string, args ...interface{}) {
-	l.Panicf(template, args...)
+	std.zapLogger.Sugar().Panicf(template, args...)
 }
 
 func Fatalf(template string, args ...interface{}) {
-	l.Fatalf(template, args...)
+	std.zapLogger.Sugar().Fatalf(template, args...)
 }
 
 func Debugw(msg string, keysAndValues ...interface{}) {
-	l.Debugw(msg, keysAndValues...)
+	std.zapLogger.Sugar().Debugw(msg, keysAndValues...)
 }
 
 func Infow(msg string, keysAndValues ...interface{}) {
-	l.Infow(msg, keysAndValues...)
+	std.zapLogger.Sugar().Infow(msg, keysAndValues...)
 }
 
 func Warnw(msg string, keysAndValues ...interface{}) {
-	l.Warnw(msg, keysAndValues...)
+	std.zapLogger.Sugar().Warnw(msg, keysAndValues...)
 }
 
 func Errorw(msg string, keysAndValues ...interface{}) {
-	l.Errorw(msg, keysAndValues...)
+	std.zapLogger.Sugar().Errorw(msg, keysAndValues...)
 }
 
 func DPanicw(msg string, keysAndValues ...interface{}) {
-	l.DPanicw(msg, keysAndValues...)
+	std.zapLogger.Sugar().DPanicw(msg, keysAndValues...)
 }
 
 func Panicw(msg string, keysAndValues ...interface{}) {
-	l.Panicw(msg, keysAndValues...)
+	std.zapLogger.Sugar().Panicw(msg, keysAndValues...)
 }
 
 func Fatalw(msg string, keysAndValues ...interface{}) {
-	l.Fatalw(msg, keysAndValues...)
+	std.zapLogger.Sugar().Fatalw(msg, keysAndValues...)
 }
 
 func Sync() error {
-	return l.Sync()
+	return std.zapLogger.Sugar().Sync()
 }
 
-func With(keyValues ...interface{}) Logger {
-	if len(keyValues) == 0 {
-		return l
-	}
-	return l.WithCallerSkip(context.Background(), defaultCallerSkip, l.tracing, keyValues...)
-}
+//func With(keyValues ...interface{}) Logger {
+//	return std.With(keysAndValues...)
+//}
 
-func WithTraceID(ctx context.Context, keyValues ...interface{}) Logger {
-	return l.WithTraceID(ctx, keyValues...)
-}
+//func WithTraceID(ctx context.Context, keyValues ...interface{}) Logger {
+//	return l.WithTraceID(ctx, keyValues...)
+//}
 
-func Ctx(ctx context.Context) Logger {
-	return l.Ctx(ctx)
-}
+//func Ctx(ctx context.Context) Logger {
+//	return l.Ctx(ctx)
+//}
 
-func GetZapLogger() *zap.Logger {
-	return l.GetZapLogger()
-}
+//func GetZapLogger() *zap.Logger {
+//	return l.GetZapLogger()
+//}
