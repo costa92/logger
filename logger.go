@@ -1,10 +1,11 @@
 package logger
 
 import (
+	"sync"
+
 	"github.com/costa92/logger/klog"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"sync"
 )
 
 func handleFields(l *zap.Logger, args []interface{}, additional ...zap.Field) []zap.Field {
@@ -109,7 +110,10 @@ func New(opts *Options) *logger {
 	}
 
 	var err error
-	log, err := loggerConfig.Build(zap.AddStacktrace(zapcore.PanicLevel), zap.AddCallerSkip(1))
+	log, err := loggerConfig.Build(
+		zap.AddStacktrace(zapcore.PanicLevel),
+		zap.AddCallerSkip(1),
+	)
 	if err != nil {
 		panic(err)
 	}
