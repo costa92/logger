@@ -3,6 +3,7 @@ package logger
 import (
 	"context"
 	"fmt"
+
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
@@ -270,10 +271,6 @@ func (l *logger) WithCallerSkip(ctx context.Context, callerSkip int, tracing rec
 
 func (l *logger) WithTraceID(ctx context.Context, keyValues ...interface{}) Logger {
 	return l.WithCallerSkip(ctx, defaultCallerSkip, TraceIDOnly, keyValues...)
-}
-
-func (l *logger) Ctx(ctx context.Context) Logger {
-	return l.WithCallerSkip(ctx, defaultCallerSkip, TraceEvent)
 }
 
 func (l *logger) GetZapLogger() *zap.Logger {

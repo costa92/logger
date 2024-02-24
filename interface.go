@@ -2,6 +2,7 @@ package logger
 
 import (
 	"context"
+
 	"go.uber.org/zap/zapcore"
 )
 
@@ -46,5 +47,8 @@ type Logger interface {
 
 	Ctx(ctx context.Context) Logger
 	WithTraceID(ctx context.Context, keyValues ...interface{}) Logger
+	WithContext(ctx context.Context) context.Context
+
+	WithName(name string) Logger
 	Flush()
 }

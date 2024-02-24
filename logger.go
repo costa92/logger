@@ -137,3 +137,10 @@ func ZapLogger() *zap.Logger {
 func Flush() {
 	_ = std.zapLogger.Sync()
 }
+
+func WithName(s string) Logger { return std.WithName(s) }
+
+func (l *logger) WithName(name string) Logger {
+	newLogger := l.zapLogger.Named(name)
+	return NewLogger(newLogger)
+}

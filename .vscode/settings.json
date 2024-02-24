@@ -1,5 +1,12 @@
 {
     "cSpell.words": [
-        "klog"
+        "Debugf",
+        "Debugw",
+        "Infof",
+        "klog",
+        "Logw",
+        "nolint",
+        "Warnf",
+        "zaplogger"
     ]
 }
