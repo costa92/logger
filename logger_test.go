@@ -25,8 +25,8 @@ func TestNewOptions(t *testing.T) {
 	opts.Development = false
 	opts.DisableCaller = true
 	opts.DisableStacktrace = true
-	opts.FieldPair = []interface{}{
-		FieldPair{"service", "client_string"},
+	opts.FieldPair = map[string]interface{}{
+		"service": "client_string",
 	}
 	t.Log(opts)
 
@@ -53,8 +53,8 @@ func Test_Log_WithTraceID(t *testing.T) {
 	opts.Development = false
 	opts.DisableCaller = true
 	opts.DisableStacktrace = true
-	opts.FieldPair = []interface{}{
-		"service", "client_string",
+	opts.FieldPair = map[string]interface{}{
+		"service": "client_string",
 	}
 	Init(opts)
 	ctx := context.Background()
@@ -65,15 +65,24 @@ func Test_Log_WithTraceID(t *testing.T) {
 	//show()
 }
 
-//func TestColorLogger(t *testing.T) {
-//	config := NewDevelopmentConfig()
-//	config.Level = DebugLevel
-//	config.DisableStacktrace = true
-//	config.DisableCaller = true
-//	SetConfig(config)
-//
-//	show()
-//}
+func TestColorLogger(t *testing.T) {
+	opts := NewOptions()
+	opts.Level = "info"
+	opts.Format = "json"
+	opts.EnableColor = true
+	opts.EnableCaller = true
+	opts.OutputPaths = []string{"stdout"}
+	opts.ErrorOutputPaths = []string{"stderr"}
+	opts.Development = false
+	opts.DisableCaller = false
+	opts.DisableStacktrace = true
+	opts.FieldPair = map[string]interface{}{
+		"service": "client_string`11",
+	}
+	Init(opts)
+	show()
+}
+
 //
 //func TestProdLogger(t *testing.T) {
 //	config := NewProductionConfig()

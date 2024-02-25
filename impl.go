@@ -286,14 +286,9 @@ func (l *logger) tracingEvent(lvl zapcore.Level, msg string, keysAndValues ...in
 			if zapcore.ErrorLevel.Enabled(lvl) {
 				span.SetStatus(codes.Error, msg)
 			}
-
-			// Allocate enough space for the worst case; if users pass only structured
-			// fields, we shouldn't penalize them with extra allocations.
 			attrs := make([]attribute.KeyValue, 0)
-
 			attrs = append(attrs, logSeverityKey.String(levelString(lvl)))
 			attrs = append(attrs, logMessageKey.String(msg))
-
 			for i := 0; i < len(l.fields); {
 				// Make sure this element isn't a dangling key.
 				if i == len(l.fields)-1 {

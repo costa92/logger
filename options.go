@@ -25,17 +25,17 @@ const (
 )
 
 type Options struct {
-	Level             string        `json:"level" yaml:"level" mapstructure:"level"`
-	Format            string        `json:"format" yaml:"format" mapstructure:"format"`
-	EnableColor       bool          `json:"enable-color" yaml:"enable-color" mapstructure:"enable-color"`
-	EnableCaller      bool          `json:"enable-caller" yaml:"enable-caller" mapstructure:"enable-caller"`
-	OutputPaths       []string      `json:"output-paths" yaml:"output-paths" mapstructure:"output-paths"`
-	ErrorOutputPaths  []string      `json:"error-output-paths" yaml:"error-output-paths" mapstructure:"error-output-paths"`
-	Development       bool          `json:"development"    yaml:"development"    mapstructure:"development"`
-	Name              string        `json:"name" yaml:"name"  mapstructure:"name"`
-	DisableCaller     bool          `json:"disable-caller"  yaml:"disable-caller"   mapstructure:"disable-caller"`
-	DisableStacktrace bool          `json:"disable-stacktrace" yaml:"disable-stacktrace" mapstructure:"disable-stacktrace"`
-	FieldPair         []interface{} `json:"field-pair" yaml:"field-pair" mapstructure:"field-pair"`
+	Level             string                 `json:"level" yaml:"level" mapstructure:"level"`
+	Format            string                 `json:"format" yaml:"format" mapstructure:"format"`
+	EnableColor       bool                   `json:"enable-color" yaml:"enable-color" mapstructure:"enable-color"`
+	EnableCaller      bool                   `json:"enable-caller" yaml:"enable-caller" mapstructure:"enable-caller"`
+	OutputPaths       []string               `json:"output-paths" yaml:"output-paths" mapstructure:"output-paths"`
+	ErrorOutputPaths  []string               `json:"error-output-paths" yaml:"error-output-paths" mapstructure:"error-output-paths"`
+	Development       bool                   `json:"development"    yaml:"development"    mapstructure:"development"`
+	Name              string                 `json:"name" yaml:"name"  mapstructure:"name"`
+	DisableCaller     bool                   `json:"disable-caller"  yaml:"disable-caller"   mapstructure:"disable-caller"`
+	DisableStacktrace bool                   `json:"disable-stacktrace" yaml:"disable-stacktrace" mapstructure:"disable-stacktrace"`
+	FieldPair         map[string]interface{} `json:"field-pair" yaml:"field-pair" mapstructure:"field-pair"`
 }
 
 func NewOptions() *Options {

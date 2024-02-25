@@ -93,7 +93,6 @@ func New(opts *Options) *logger {
 		EncodeDuration: milliSecondsDurationEncoder,
 		EncodeCaller:   zapcore.ShortCallerEncoder,
 	}
-
 	loggerConfig := &zap.Config{
 		Level:             zap.NewAtomicLevelAt(zapLevel),
 		Development:       opts.Development,
@@ -107,7 +106,7 @@ func New(opts *Options) *logger {
 		EncoderConfig:    encoderConfig,
 		OutputPaths:      opts.OutputPaths,
 		ErrorOutputPaths: opts.ErrorOutputPaths,
-		//InitialFields:    genInitialFields(),
+		InitialFields:    opts.FieldPair,
 	}
 
 	var err error
@@ -119,10 +118,14 @@ func New(opts *Options) *logger {
 		panic(err)
 	}
 
+	var fieldPair []interface{}
+	for k, v := range opts.FieldPair {
+		fieldPair = append(fieldPair, zap.Any(k, v))
+	}
 	logger := &logger{
 		zapLogger: log,
 		logger:    log.Sugar(),
-		fields:    opts.FieldPair,
+		fields:    fieldPair,
 		options:   opts,
 		skipInit:  true,
 		infoLogger: infoLogger{
