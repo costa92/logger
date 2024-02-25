@@ -107,6 +107,7 @@ func New(opts *Options) *logger {
 		EncoderConfig:    encoderConfig,
 		OutputPaths:      opts.OutputPaths,
 		ErrorOutputPaths: opts.ErrorOutputPaths,
+		//InitialFields:    genInitialFields(),
 	}
 
 	var err error
@@ -120,6 +121,10 @@ func New(opts *Options) *logger {
 
 	logger := &logger{
 		zapLogger: log,
+		logger:    log.Sugar(),
+		fields:    opts.FieldPair,
+		options:   opts,
+		skipInit:  true,
 		infoLogger: infoLogger{
 			log:   log,
 			level: zap.InfoLevel,

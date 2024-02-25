@@ -248,7 +248,6 @@ func (l *logger) WithCallerSkip(ctx context.Context, callerSkip int, tracing rec
 	newFields := make([]interface{}, len(l.fields), len(l.fields)+len(keyValues))
 	copy(newFields, l.fields)
 	newFields = append(newFields, keyValues...)
-
 	sugar := l.logger.With(keyValues...)
 	zaplogger := l.zapLogger
 
@@ -281,12 +280,6 @@ func (l *logger) tracingEvent(lvl zapcore.Level, msg string, keysAndValues ...in
 	if l.ctx == nil {
 		return keysAndValues
 	}
-
-	// skip handling tracing if current logging level is not enabled
-	//if !l.config.zapConfig.Level.Level().Enabled(lvl) {
-	//	return keysAndValues
-	//}
-
 	span := trace.SpanFromContext(l.ctx)
 	if span.IsRecording() {
 		if l.tracing == TraceEvent {
