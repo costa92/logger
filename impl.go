@@ -3,7 +3,6 @@ package logger
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -16,46 +15,79 @@ type recordingType int
 
 type logger struct {
 	ctx       context.Context
-	config    *Config
+	options   *Options
 	logger    *zap.SugaredLogger
 	zapLogger *zap.Logger
 	fields    []interface{}
 	skipInit  bool
 	tracing   recordingType
+
+	infoLogger
 }
 
-func newLogger(config *Config) *logger {
-	config.buildZapConfig()
+func (l *logger) Flush() {
+	_ = l.zapLogger.Sync()
+}
 
-	zapLogger, err := config.zapConfig.Build()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error on build zap logger (%s)", err)
-		return nil
+type infoLogger struct {
+	level zapcore.Level
+	log   *zap.Logger
+}
+
+func (l *infoLogger) Enabled() bool { return true }
+
+func (l *infoLogger) Info(msg string, fields ...Field) {
+	if checkedEntry := l.log.Check(l.level, msg); checkedEntry != nil {
+		checkedEntry.Write(fields...)
 	}
-	zapLogger = zapLogger.WithOptions(zap.AddCallerSkip(config.CallerSkip))
+}
 
+func (l *infoLogger) Infow(msg string, keysAndValues ...interface{}) {
+	if checkedEntry := l.log.Check(l.level, msg); checkedEntry != nil {
+		checkedEntry.Write(handleFields(l.log, keysAndValues)...)
+	}
+}
+
+func (l *infoLogger) Infof(format string, args ...interface{}) {
+	if checkedEntry := l.log.Check(l.level, fmt.Sprintf(format, args...)); checkedEntry != nil {
+		checkedEntry.Write()
+	}
+}
+
+func NewLogger(l *zap.Logger) *logger {
 	return &logger{
-		logger:    zapLogger.Sugar(),
-		zapLogger: zapLogger,
-		config:    config,
+		logger:    l.Sugar(),
+		zapLogger: l,
 	}
 }
 
-func (l *logger) SetLevel(level Level) {
-	l.config.Level = level
-	l.config.zapConfig.Level.SetLevel(zapcore.Level(level))
-}
+func V(level zapcore.Level) InfoLogger { return std.V(level) }
 
-func (l *logger) Level() Level {
-	return l.config.Level
+type noopInfoLogger struct{}
+
+func (l *noopInfoLogger) Enabled() bool                                { return false }
+func (l *noopInfoLogger) Info(_ string, _ ...Field)                    {}
+func (l *noopInfoLogger) Infof(_ string, v ...interface{})             {}
+func (l *noopInfoLogger) Infow(_ string, keysAndValues ...interface{}) {}
+
+var disabledInfoLogger = &noopInfoLogger{}
+
+func (l *logger) V(level zapcore.Level) InfoLogger {
+	if l.zapLogger.Core().Enabled(level) {
+		return &infoLogger{
+			level: level,
+			log:   l.zapLogger,
+		}
+	}
+	return disabledInfoLogger
 }
 
 func (l *logger) Debug(args ...interface{}) {
 	l.logger.Debug(args...)
 }
 
-func (l *logger) Info(args ...interface{}) {
-	l.logger.Info(args...)
+func (l *logger) Info(mgs string, args ...Field) {
+	std.zapLogger.Info(mgs, args...)
 }
 
 func (l *logger) Warn(args ...interface{}) {
@@ -157,6 +189,10 @@ func (l *logger) Log(level Level, args ...interface{}) {
 	}
 }
 
+func (l *logger) Enabled() bool {
+	return true
+}
+
 func (l *logger) Logf(level Level, template string, args ...interface{}) {
 	// nolint: exhaustive
 	switch level {
@@ -212,7 +248,6 @@ func (l *logger) WithCallerSkip(ctx context.Context, callerSkip int, tracing rec
 	newFields := make([]interface{}, len(l.fields), len(l.fields)+len(keyValues))
 	copy(newFields, l.fields)
 	newFields = append(newFields, keyValues...)
-
 	sugar := l.logger.With(keyValues...)
 	zaplogger := l.zapLogger
 
@@ -225,7 +260,6 @@ func (l *logger) WithCallerSkip(ctx context.Context, callerSkip int, tracing rec
 	newLogger := &logger{
 		ctx:       ctx,
 		fields:    newFields,
-		config:    l.config.clone(),
 		logger:    sugar,
 		zapLogger: zaplogger,
 		skipInit:  true,
@@ -238,10 +272,6 @@ func (l *logger) WithTraceID(ctx context.Context, keyValues ...interface{}) Logg
 	return l.WithCallerSkip(ctx, defaultCallerSkip, TraceIDOnly, keyValues...)
 }
 
-func (l *logger) Ctx(ctx context.Context) Logger {
-	return l.WithCallerSkip(ctx, defaultCallerSkip, TraceEvent)
-}
-
 func (l *logger) GetZapLogger() *zap.Logger {
 	return l.zapLogger
 }
@@ -250,26 +280,15 @@ func (l *logger) tracingEvent(lvl zapcore.Level, msg string, keysAndValues ...in
 	if l.ctx == nil {
 		return keysAndValues
 	}
-
-	// skip handling tracing if current logging level is not enabled
-	if !l.config.zapConfig.Level.Level().Enabled(lvl) {
-		return keysAndValues
-	}
-
 	span := trace.SpanFromContext(l.ctx)
 	if span.IsRecording() {
 		if l.tracing == TraceEvent {
 			if zapcore.ErrorLevel.Enabled(lvl) {
 				span.SetStatus(codes.Error, msg)
 			}
-
-			// Allocate enough space for the worst case; if users pass only structured
-			// fields, we shouldn't penalize them with extra allocations.
 			attrs := make([]attribute.KeyValue, 0)
-
 			attrs = append(attrs, logSeverityKey.String(levelString(lvl)))
 			attrs = append(attrs, logMessageKey.String(msg))
-
 			for i := 0; i < len(l.fields); {
 				// Make sure this element isn't a dangling key.
 				if i == len(l.fields)-1 {

@@ -2,113 +2,105 @@ package logger
 
 import (
 	"context"
-
 	"go.uber.org/zap"
 )
 
 func Debug(args ...interface{}) {
-	l.Debug(args...)
+	std.logger.Debug(args...)
 }
 
 func Info(args ...interface{}) {
-	l.Info(args...)
+	std.logger.Info(args...)
 }
 
 func Warn(args ...interface{}) {
-	l.Warn(args...)
+	std.logger.Warn(args...)
 }
 
 func Error(args ...interface{}) {
-	l.Error(args...)
+	std.logger.Error(args...)
 }
 
 func DPanic(args ...interface{}) {
-	l.DPanic(args...)
+	std.logger.DPanic(args...)
 }
 
 func Panic(args ...interface{}) {
-	l.Panic(args...)
+	std.logger.Panic(args...)
 }
 
 func Fatal(args ...interface{}) {
-	l.Fatal(args...)
+	std.logger.Fatal(args...)
 }
 
 func Debugf(template string, args ...interface{}) {
-	l.Debugf(template, args...)
+	std.logger.Debugf(template, args...)
 }
 
 func Infof(template string, args ...interface{}) {
-	l.Infof(template, args...)
+	std.logger.Infof(template, args...)
 }
 
 func Warnf(template string, args ...interface{}) {
-	l.Warnf(template, args...)
+	std.logger.Warnf(template, args...)
 }
 
 func Errorf(template string, args ...interface{}) {
-	l.Errorf(template, args...)
+	std.logger.Errorf(template, args...)
 }
 
 func DPanicf(template string, args ...interface{}) {
-	l.DPanicf(template, args...)
+	std.logger.DPanicf(template, args...)
 }
 
 func Panicf(template string, args ...interface{}) {
-	l.Panicf(template, args...)
+	std.logger.Panicf(template, args...)
 }
 
 func Fatalf(template string, args ...interface{}) {
-	l.Fatalf(template, args...)
+	std.logger.Fatalf(template, args...)
 }
 
 func Debugw(msg string, keysAndValues ...interface{}) {
-	l.Debugw(msg, keysAndValues...)
+	std.logger.Debugw(msg, keysAndValues...)
 }
 
 func Infow(msg string, keysAndValues ...interface{}) {
-	l.Infow(msg, keysAndValues...)
+	std.logger.Infow(msg, keysAndValues...)
 }
 
 func Warnw(msg string, keysAndValues ...interface{}) {
-	l.Warnw(msg, keysAndValues...)
+	std.logger.Warnw(msg, keysAndValues...)
 }
 
 func Errorw(msg string, keysAndValues ...interface{}) {
-	l.Errorw(msg, keysAndValues...)
+	std.logger.Errorw(msg, keysAndValues...)
 }
 
 func DPanicw(msg string, keysAndValues ...interface{}) {
-	l.DPanicw(msg, keysAndValues...)
+	std.zapLogger.Sugar().DPanicw(msg, keysAndValues...)
 }
 
 func Panicw(msg string, keysAndValues ...interface{}) {
-	l.Panicw(msg, keysAndValues...)
+	std.logger.Panicw(msg, keysAndValues...)
 }
 
 func Fatalw(msg string, keysAndValues ...interface{}) {
-	l.Fatalw(msg, keysAndValues...)
+	std.zapLogger.Sugar().Fatalw(msg, keysAndValues...)
 }
 
 func Sync() error {
-	return l.Sync()
+	return std.logger.Sync()
 }
 
 func With(keyValues ...interface{}) Logger {
-	if len(keyValues) == 0 {
-		return l
-	}
-	return l.WithCallerSkip(context.Background(), defaultCallerSkip, l.tracing, keyValues...)
+	return std.With(keyValues...)
 }
 
 func WithTraceID(ctx context.Context, keyValues ...interface{}) Logger {
-	return l.WithTraceID(ctx, keyValues...)
-}
-
-func Ctx(ctx context.Context) Logger {
-	return l.Ctx(ctx)
+	return std.WithTraceID(ctx, keyValues...)
 }
 
 func GetZapLogger() *zap.Logger {
-	return l.GetZapLogger()
+	return std.GetZapLogger()
 }
