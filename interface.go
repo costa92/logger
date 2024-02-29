@@ -7,7 +7,7 @@ import (
 )
 
 type InfoLogger interface {
-	Info(mgs string, args ...Field)
+	Info(mgs string, args ...interface{})
 	Infof(format string, v ...interface{})
 	Infow(msg string, keysAndValues ...interface{})
 
