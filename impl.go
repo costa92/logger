@@ -13,6 +13,13 @@ import (
 
 type recordingType int
 
+const (
+	KeyRequestID   = "X-Request-ID"
+	KeyUsername    = "username"
+	KeyWatcherName = "watcher_name"
+	KeyTraceID     = "trace_id"
+)
+
 type logger struct {
 	ctx       context.Context
 	options   *Options
@@ -235,6 +242,29 @@ func (l *logger) With(keyValues ...interface{}) Logger {
 
 func (l *logger) WithSkip(callerSkip int, keyValues ...interface{}) Logger {
 	return l.WithCallerSkip(l.ctx, callerSkip, l.tracing, keyValues...)
+}
+
+func (l *logger) L(ctx context.Context) *logger {
+	lg := l.clone()
+	if requestID := ctx.Value(KeyRequestID); requestID != nil {
+		lg = lg.With(KeyRequestID, requestID).(*logger)
+	}
+	if username := ctx.Value(KeyUsername); username != nil {
+		lg = lg.WithCallerSkip(l.ctx, defaultCallerSkip, l.tracing, KeyUsername, username).(*logger)
+	}
+	if watcherName := ctx.Value(KeyWatcherName); watcherName != nil {
+		lg = lg.WithCallerSkip(l.ctx, defaultCallerSkip, l.tracing, KeyWatcherName, KeyWatcherName).(*logger)
+	}
+	if traceId := ctx.Value(KeyTraceID); traceId != nil {
+		lg = lg.WithCallerSkip(l.ctx, defaultCallerSkip, l.tracing, KeyTraceID, traceId).(*logger)
+	}
+	std = lg
+	return lg
+}
+
+func (l *logger) clone() *logger {
+	copy := *l
+	return &copy
 }
 
 const (

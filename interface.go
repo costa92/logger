@@ -42,13 +42,10 @@ type Logger interface {
 	Logw(level Level, msg string, keysAndValues ...interface{})
 	With(keyValues ...interface{}) Logger
 	WithSkip(callerSkip int, keyValues ...interface{}) Logger
-
 	V(level zapcore.Level) InfoLogger
-
 	Ctx(ctx context.Context) Logger
 	WithTraceID(ctx context.Context, keyValues ...interface{}) Logger
 	WithContext(ctx context.Context) context.Context
-
 	WithName(name string) Logger
 	Flush()
 }
