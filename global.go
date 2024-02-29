@@ -1,5 +1,3 @@
 package logger
 
-var (
-	defaultConfig = NewOptions()
-)
+var defaultConfig = NewOptions()

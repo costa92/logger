@@ -36,9 +36,9 @@ type infoLogger struct {
 
 func (l *infoLogger) Enabled() bool { return true }
 
-func (l *infoLogger) Info(msg string, fields ...Field) {
+func (l *infoLogger) Info(msg string, fields ...interface{}) {
 	if checkedEntry := l.log.Check(l.level, msg); checkedEntry != nil {
-		checkedEntry.Write(fields...)
+		checkedEntry.Write(handleFields(l.log, fields)...)
 	}
 }
 
@@ -66,7 +66,7 @@ func V(level zapcore.Level) InfoLogger { return std.V(level) }
 type noopInfoLogger struct{}
 
 func (l *noopInfoLogger) Enabled() bool                                { return false }
-func (l *noopInfoLogger) Info(_ string, _ ...Field)                    {}
+func (l *noopInfoLogger) Info(_ string, _ ...interface{})              {}
 func (l *noopInfoLogger) Infof(_ string, v ...interface{})             {}
 func (l *noopInfoLogger) Infow(_ string, keysAndValues ...interface{}) {}
 
@@ -86,8 +86,8 @@ func (l *logger) Debug(args ...interface{}) {
 	l.logger.Debug(args...)
 }
 
-func (l *logger) Info(mgs string, args ...Field) {
-	std.zapLogger.Info(mgs, args...)
+func (l *logger) Info(mgs string, args ...interface{}) {
+	l.logger.Infow(mgs, args)
 }
 
 func (l *logger) Warn(args ...interface{}) {

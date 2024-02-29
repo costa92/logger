@@ -58,11 +58,10 @@ func Test_Log_WithTraceID(t *testing.T) {
 	}
 	Init(opts)
 	ctx := context.Background()
-	//WithTraceID(ctx)
 	log := WithTraceID(ctx, "trace_id", "274ac2bbf9d5")
 	log.Info("info message")
-
-	//show()
+	log.Error("err message")
+	show()
 }
 
 func TestColorLogger(t *testing.T) {
@@ -77,7 +76,7 @@ func TestColorLogger(t *testing.T) {
 	opts.DisableCaller = false
 	opts.DisableStacktrace = true
 	opts.FieldPair = map[string]interface{}{
-		"service": "client_string`11",
+		"service": "client_string",
 	}
 	Init(opts)
 	show()
