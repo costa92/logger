@@ -102,6 +102,18 @@ func WithTraceID(ctx context.Context, keyValues ...interface{}) Logger {
 	return std.WithTraceID(ctx, keyValues...)
 }
 
+func Ctx(ctx context.Context) Logger {
+	return std.Ctx(ctx)
+}
+
+func L(ctx context.Context) Logger {
+	return std.L(ctx)
+}
+
 func GetZapLogger() *zap.Logger {
 	return std.GetZapLogger()
+}
+
+func GetLogger() *logger {
+	return std
 }

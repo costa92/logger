@@ -58,9 +58,12 @@ func Test_Log_WithTraceID(t *testing.T) {
 	}
 	Init(opts)
 	ctx := context.Background()
-	log := WithTraceID(ctx, "trace_id", "274ac2bbf9d5")
-	log.Info("info message")
-	log.Error("err message")
+	childCtx := context.WithValue(ctx, KeyRequestID, "value1")
+	L(childCtx).Infow("info message", "da", "123")
+
+	// log := WithTraceID(ctx, "trace_id", "274ac2bbf9d5")
+	// log.Info("info message")
+	Ctx(childCtx).Errorw("err message")
 	show()
 }
 
